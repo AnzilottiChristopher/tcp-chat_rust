@@ -81,4 +81,27 @@ impl Server {
     pub fn get_client(&self, client_id: ClientId) -> Option<&Client> {
         self.clients[client_id]
     }
+
+    // Adding a client to a room 
+    pub fn add_client_to_room(&mut self, client_id: ClientId, room_id: RoomId) -> Result<(), Errors> {
+        let room = self.rooms
+            .get_mut(&room_id)
+            .ok_or(Errors::RoomNotFound)?;
+        
+        if room.members.contains_key(&client_id) {
+            return Err(Errors::ClientInRoom);
+        }
+
+        room.members.insert(client_id, room.next_member_id);
+        room.next_member_id += 1;
+
+        Ok(())
+    }
+}
+
+#[derive(Debug)]
+pub enum Errors {
+    RoomNotFound,
+    ClientInRoom,
+    RoomFull,
 }
