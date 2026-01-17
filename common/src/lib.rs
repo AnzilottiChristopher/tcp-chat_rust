@@ -1,7 +1,5 @@
 use std::collections::HashMap;
 use tokio::sync::mpsc;
-use tokio::net::TcpStream;
-use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
 // Basic Ids
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Copy)]
@@ -52,11 +50,14 @@ impl Client {
             message: ChatClient { tx, rx },
         }
     }
-
-    // Connect to Server 
-    pub fn connect(&self, ) {
-        
+    
+    // Send a message to server
+    pub fn send_message_to_server(&self, message: String) -> Result<(), Errors> {
+        self.message.tx.send(message).map_err(|_| Errors::SendFailed)
     }
+
+    // TODO: Create join room function, create quit function, create leave room function, create
+    // receive message function
 }
 
 pub struct Server {
@@ -178,6 +179,7 @@ pub enum Errors {
     ClientInRoom,
     RoomFull,
     ClientNotInRoom,
+    SendFailed,
 }
 
 #[cfg(test)]

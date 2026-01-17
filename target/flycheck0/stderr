@@ -3,176 +3,25 @@ warning: virtual workspace defaulting to `resolver = "1"` despite one or more wo
   = note: to keep the current resolver, specify `workspace.resolver = "1"` in the workspace root's manifest
   = note: to use the edition 2024 resolver, specify `workspace.resolver = "3"` in the workspace root's manifest
   = note: for more details see https://doc.rust-lang.org/cargo/reference/resolver.html#resolver-versions
-   0.044957600s  INFO prepare_target{force=false package_id=client v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\client) target="client"}: cargo::core::compiler::fingerprint: fingerprint error for client v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\client)/Check { test: false }/TargetInner { name: "client", doc: true, ..: with_path("C:\\Users\\anzil\\dev\\rust_projects\\tcp-chat\\client\\src\\main.rs", Edition2024) }
-   0.045004500s  INFO prepare_target{force=false package_id=client v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\client) target="client"}: cargo::core::compiler::fingerprint:     err: failed to read `C:\Users\anzil\dev\rust_projects\tcp-chat\target\debug\.fingerprint\client-0259c2f8d7f47682\bin-client`
-
-Caused by:
-    The system cannot find the file specified. (os error 2)
-
-Stack backtrace:
-   0: git_midx_writer_dump
-   1: git_midx_writer_dump
-   2: git_midx_writer_dump
-   3: git_midx_writer_dump
-   4: git_filter_source_repo
-   5: git_filter_source_repo
-   6: git_filter_source_repo
-   7: git_filter_source_repo
-   8: git_filter_source_repo
-   9: git_filter_source_repo
-  10: git_filter_source_repo
-  11: git_libgit2_prerelease
-  12: <unknown>
-  13: <unknown>
-  14: <unknown>
-  15: <unknown>
-  16: git_midx_writer_dump
-  17: git_filter_source_repo
-  18: git_midx_writer_dump
-  19: BaseThreadInitThunk
-  20: RtlUserThreadStart
-   0.054080400s  INFO prepare_target{force=false package_id=common v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\common) target="common"}: cargo::core::compiler::fingerprint: fingerprint error for common v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\common)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("common", ["lib"], "C:\\Users\\anzil\\dev\\rust_projects\\tcp-chat\\common\\src\\lib.rs", Edition2024) }
-   0.054111100s  INFO prepare_target{force=false package_id=common v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\common) target="common"}: cargo::core::compiler::fingerprint:     err: failed to read `C:\Users\anzil\dev\rust_projects\tcp-chat\target\debug\.fingerprint\common-44832b9bbacb94d4\lib-common`
-
-Caused by:
-    The system cannot find the file specified. (os error 2)
-
-Stack backtrace:
-   0: git_midx_writer_dump
-   1: git_midx_writer_dump
-   2: git_midx_writer_dump
-   3: git_midx_writer_dump
-   4: git_filter_source_repo
-   5: git_filter_source_repo
-   6: git_filter_source_repo
-   7: git_filter_source_repo
-   8: git_filter_source_repo
-   9: git_filter_source_repo
-  10: git_filter_source_repo
-  11: git_filter_source_repo
-  12: git_libgit2_prerelease
-  13: <unknown>
-  14: <unknown>
-  15: <unknown>
-  16: <unknown>
-  17: git_midx_writer_dump
-  18: git_filter_source_repo
-  19: git_midx_writer_dump
-  20: BaseThreadInitThunk
-  21: RtlUserThreadStart
-   0.061251400s  INFO prepare_target{force=false package_id=client v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\client) target="client"}: cargo::core::compiler::fingerprint: fingerprint error for client v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\client)/Check { test: true }/TargetInner { name: "client", doc: true, ..: with_path("C:\\Users\\anzil\\dev\\rust_projects\\tcp-chat\\client\\src\\main.rs", Edition2024) }
-   0.061272100s  INFO prepare_target{force=false package_id=client v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\client) target="client"}: cargo::core::compiler::fingerprint:     err: failed to read `C:\Users\anzil\dev\rust_projects\tcp-chat\target\debug\.fingerprint\client-6ac16102e16b9ecd\test-bin-client`
-
-Caused by:
-    The system cannot find the file specified. (os error 2)
-
-Stack backtrace:
-   0: git_midx_writer_dump
-   1: git_midx_writer_dump
-   2: git_midx_writer_dump
-   3: git_midx_writer_dump
-   4: git_filter_source_repo
-   5: git_filter_source_repo
-   6: git_filter_source_repo
-   7: git_filter_source_repo
-   8: git_filter_source_repo
-   9: git_filter_source_repo
-  10: git_filter_source_repo
-  11: git_libgit2_prerelease
-  12: <unknown>
-  13: <unknown>
-  14: <unknown>
-  15: <unknown>
-  16: git_midx_writer_dump
-  17: git_filter_source_repo
-  18: git_midx_writer_dump
-  19: BaseThreadInitThunk
-  20: RtlUserThreadStart
-   0.061657800s  INFO prepare_target{force=false package_id=common v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\common) target="common"}: cargo::core::compiler::fingerprint: fingerprint error for common v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\common)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("common", ["lib"], "C:\\Users\\anzil\\dev\\rust_projects\\tcp-chat\\common\\src\\lib.rs", Edition2024) }
-   0.061678200s  INFO prepare_target{force=false package_id=common v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\common) target="common"}: cargo::core::compiler::fingerprint:     err: failed to read `C:\Users\anzil\dev\rust_projects\tcp-chat\target\debug\.fingerprint\common-aadfcc2bea502e29\test-lib-common`
-
-Caused by:
-    The system cannot find the file specified. (os error 2)
-
-Stack backtrace:
-   0: git_midx_writer_dump
-   1: git_midx_writer_dump
-   2: git_midx_writer_dump
-   3: git_midx_writer_dump
-   4: git_filter_source_repo
-   5: git_filter_source_repo
-   6: git_filter_source_repo
-   7: git_filter_source_repo
-   8: git_filter_source_repo
-   9: git_filter_source_repo
-  10: git_filter_source_repo
-  11: git_libgit2_prerelease
-  12: <unknown>
-  13: <unknown>
-  14: <unknown>
-  15: <unknown>
-  16: git_midx_writer_dump
-  17: git_filter_source_repo
-  18: git_midx_writer_dump
-  19: BaseThreadInitThunk
-  20: RtlUserThreadStart
-   0.062141900s  INFO prepare_target{force=false package_id=server v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\server) target="server"}: cargo::core::compiler::fingerprint: fingerprint error for server v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\server)/Check { test: false }/TargetInner { name: "server", doc: true, ..: with_path("C:\\Users\\anzil\\dev\\rust_projects\\tcp-chat\\server\\src\\main.rs", Edition2024) }
-   0.062158800s  INFO prepare_target{force=false package_id=server v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\server) target="server"}: cargo::core::compiler::fingerprint:     err: failed to read `C:\Users\anzil\dev\rust_projects\tcp-chat\target\debug\.fingerprint\server-0fb393b64a7d9237\bin-server`
-
-Caused by:
-    The system cannot find the file specified. (os error 2)
-
-Stack backtrace:
-   0: git_midx_writer_dump
-   1: git_midx_writer_dump
-   2: git_midx_writer_dump
-   3: git_midx_writer_dump
-   4: git_filter_source_repo
-   5: git_filter_source_repo
-   6: git_filter_source_repo
-   7: git_filter_source_repo
-   8: git_filter_source_repo
-   9: git_filter_source_repo
-  10: git_filter_source_repo
-  11: git_libgit2_prerelease
-  12: <unknown>
-  13: <unknown>
-  14: <unknown>
-  15: <unknown>
-  16: git_midx_writer_dump
-  17: git_filter_source_repo
-  18: git_midx_writer_dump
-  19: BaseThreadInitThunk
-  20: RtlUserThreadStart
-   0.062497900s  INFO prepare_target{force=false package_id=server v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\server) target="server"}: cargo::core::compiler::fingerprint: fingerprint error for server v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\server)/Check { test: true }/TargetInner { name: "server", doc: true, ..: with_path("C:\\Users\\anzil\\dev\\rust_projects\\tcp-chat\\server\\src\\main.rs", Edition2024) }
-   0.062514800s  INFO prepare_target{force=false package_id=server v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\server) target="server"}: cargo::core::compiler::fingerprint:     err: failed to read `C:\Users\anzil\dev\rust_projects\tcp-chat\target\debug\.fingerprint\server-71ab670876ca46b4\test-bin-server`
-
-Caused by:
-    The system cannot find the file specified. (os error 2)
-
-Stack backtrace:
-   0: git_midx_writer_dump
-   1: git_midx_writer_dump
-   2: git_midx_writer_dump
-   3: git_midx_writer_dump
-   4: git_filter_source_repo
-   5: git_filter_source_repo
-   6: git_filter_source_repo
-   7: git_filter_source_repo
-   8: git_filter_source_repo
-   9: git_filter_source_repo
-  10: git_filter_source_repo
-  11: git_libgit2_prerelease
-  12: <unknown>
-  13: <unknown>
-  14: <unknown>
-  15: <unknown>
-  16: git_midx_writer_dump
-  17: git_filter_source_repo
-  18: git_midx_writer_dump
-  19: BaseThreadInitThunk
-  20: RtlUserThreadStart
+   0.042013300s  INFO prepare_target{force=false package_id=client v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\client) target="client"}: cargo::core::compiler::fingerprint: stale: changed "C:\\Users\\anzil\\dev\\rust_projects\\tcp-chat\\common\\src\\lib.rs"
+   0.042048100s  INFO prepare_target{force=false package_id=client v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\client) target="client"}: cargo::core::compiler::fingerprint:           (vs) "C:\\Users\\anzil\\dev\\rust_projects\\tcp-chat\\target\\debug\\.fingerprint\\common-44832b9bbacb94d4\\dep-lib-common"
+   0.042056300s  INFO prepare_target{force=false package_id=client v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\client) target="client"}: cargo::core::compiler::fingerprint:                FileTime { seconds: 13413092262, nanos: 111336000 } < FileTime { seconds: 13413092301, nanos: 422451300 }
+   0.042285500s  INFO prepare_target{force=false package_id=client v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\client) target="client"}: cargo::core::compiler::fingerprint: fingerprint dirty for client v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\client)/Check { test: false }/TargetInner { name: "client", doc: true, ..: with_path("C:\\Users\\anzil\\dev\\rust_projects\\tcp-chat\\client\\src\\main.rs", Edition2024) }
+   0.042312200s  INFO prepare_target{force=false package_id=client v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\client) target="client"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleDepFingerprint { name: "common" })
+   0.043045300s  INFO prepare_target{force=false package_id=common v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\common) target="common"}: cargo::core::compiler::fingerprint: fingerprint dirty for common v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\common)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("common", ["lib"], "C:\\Users\\anzil\\dev\\rust_projects\\tcp-chat\\common\\src\\lib.rs", Edition2024) }
+   0.043067700s  INFO prepare_target{force=false package_id=common v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\common) target="common"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleItem(ChangedFile { reference: "C:\\Users\\anzil\\dev\\rust_projects\\tcp-chat\\target\\debug\\.fingerprint\\common-44832b9bbacb94d4\\dep-lib-common", reference_mtime: FileTime { seconds: 13413092262, nanos: 111336000 }, stale: "C:\\Users\\anzil\\dev\\rust_projects\\tcp-chat\\common\\src\\lib.rs", stale_mtime: FileTime { seconds: 13413092301, nanos: 422451300 } }))
+   0.050191600s  INFO prepare_target{force=false package_id=client v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\client) target="client"}: cargo::core::compiler::fingerprint: fingerprint dirty for client v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\client)/Check { test: true }/TargetInner { name: "client", doc: true, ..: with_path("C:\\Users\\anzil\\dev\\rust_projects\\tcp-chat\\client\\src\\main.rs", Edition2024) }
+   0.050212400s  INFO prepare_target{force=false package_id=client v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\client) target="client"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleDepFingerprint { name: "common" })
+   0.050805600s  INFO prepare_target{force=false package_id=common v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\common) target="common"}: cargo::core::compiler::fingerprint: stale: changed "C:\\Users\\anzil\\dev\\rust_projects\\tcp-chat\\common\\src\\lib.rs"
+   0.050818600s  INFO prepare_target{force=false package_id=common v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\common) target="common"}: cargo::core::compiler::fingerprint:           (vs) "C:\\Users\\anzil\\dev\\rust_projects\\tcp-chat\\target\\debug\\.fingerprint\\common-aadfcc2bea502e29\\dep-test-lib-common"
+   0.050825000s  INFO prepare_target{force=false package_id=common v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\common) target="common"}: cargo::core::compiler::fingerprint:                FileTime { seconds: 13413092262, nanos: 111336000 } < FileTime { seconds: 13413092301, nanos: 422451300 }
+   0.050969200s  INFO prepare_target{force=false package_id=common v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\common) target="common"}: cargo::core::compiler::fingerprint: fingerprint dirty for common v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\common)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("common", ["lib"], "C:\\Users\\anzil\\dev\\rust_projects\\tcp-chat\\common\\src\\lib.rs", Edition2024) }
+   0.050985700s  INFO prepare_target{force=false package_id=common v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\common) target="common"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleItem(ChangedFile { reference: "C:\\Users\\anzil\\dev\\rust_projects\\tcp-chat\\target\\debug\\.fingerprint\\common-aadfcc2bea502e29\\dep-test-lib-common", reference_mtime: FileTime { seconds: 13413092262, nanos: 111336000 }, stale: "C:\\Users\\anzil\\dev\\rust_projects\\tcp-chat\\common\\src\\lib.rs", stale_mtime: FileTime { seconds: 13413092301, nanos: 422451300 } }))
+   0.051632200s  INFO prepare_target{force=false package_id=server v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\server) target="server"}: cargo::core::compiler::fingerprint: fingerprint dirty for server v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\server)/Check { test: false }/TargetInner { name: "server", doc: true, ..: with_path("C:\\Users\\anzil\\dev\\rust_projects\\tcp-chat\\server\\src\\main.rs", Edition2024) }
+   0.051648800s  INFO prepare_target{force=false package_id=server v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\server) target="server"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleDepFingerprint { name: "common" })
+   0.052293300s  INFO prepare_target{force=false package_id=server v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\server) target="server"}: cargo::core::compiler::fingerprint: fingerprint dirty for server v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\server)/Check { test: true }/TargetInner { name: "server", doc: true, ..: with_path("C:\\Users\\anzil\\dev\\rust_projects\\tcp-chat\\server\\src\\main.rs", Edition2024) }
+   0.052317900s  INFO prepare_target{force=false package_id=server v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\server) target="server"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleDepFingerprint { name: "common" })
     Checking common v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\common)
     Checking server v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\server)
     Checking client v0.1.0 (C:\Users\anzil\dev\rust_projects\tcp-chat\client)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.30s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.28s
