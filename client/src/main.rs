@@ -40,7 +40,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let mut client = RuntimeClient {
         client: client,
-        rx: rx,
+        rx: rx, // RX will read from the channels buffer, TX sends to the buffer to be read
         server_addr: "127.0.0.1:8080".to_string()
     };
 
