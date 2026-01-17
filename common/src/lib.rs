@@ -30,34 +30,25 @@ impl ChatRoom {
 
 // TCP Helpers
 pub struct ChatClient {
-    pub tx: mpsc::UnboundedSender<String>,
-    pub rx: mpsc::UnboundedReceiver<String>,
+    pub tx: mpsc::Sender<String>,
 }
 
 // Object of the clients. What they can do as well
 pub struct Client {
-    pub id: ClientId, // The id for the client
-    pub server_addr: String,
+    pub id: ClientId,        // The id for the client
     pub message: ChatClient, // The message Clients send
 }
 
 impl Client {
-    pub fn new(client_id: ClientId, address: String) -> Self {
-        let (tx, rx) = mpsc::unbounded_channel();
-        Self {
-            id: client_id,
-            server_addr: address,
-            message: ChatClient { tx, rx },
-        }
-    }
-    
     // Send a message to server
-    pub fn send_message_to_server(&self, message: String) -> Result<(), Errors> {
-        self.message.tx.send(message).map_err(|_| Errors::SendFailed)
+    pub async fn send(&self, msg: String) {
+        let _ = self
+            .message
+            .tx
+            .send(msg)
+            .await
+            .map_err(|_| Errors::SendFailed);
     }
-
-    // TODO: Create join room function, create quit function, create leave room function, create
-    // receive message function
 }
 
 pub struct Server {
@@ -80,22 +71,25 @@ impl Server {
 
     // This works on the asssumption the TCP connection is established
     // Furthermore it sends clients their id and adds them to the server's collection
-    pub fn add_client(&mut self, outbound: ChatClient) -> ClientId {
+    pub async fn add_client(&mut self, outbound: ChatClient) -> Result<ClientId, Errors> {
         let client_id = ClientId(self.next_client_id);
         self.next_client_id += 1;
 
         let welcome_msg = format!("Your client ID is {}", client_id.0);
-        let _ = outbound.tx.send(welcome_msg);
+        outbound
+            .tx
+            .send(welcome_msg)
+            .await
+            .map_err(|_| Errors::SendFailed)?;
 
         let client = Client {
             id: client_id,
-            server_addr: "None".to_string(),
             message: outbound,
         };
 
         self.clients.insert(client_id, client);
 
-        client_id
+        Ok(client_id)
     }
     // The following function will remove a client from the list
     pub fn remove_client(&mut self, client_id: ClientId) {
@@ -114,9 +108,9 @@ impl Server {
     pub fn add_client_to_room(
         &mut self,
         client_id: ClientId,
-        room_id: RoomId,
+        room_id: &RoomId,
     ) -> Result<(), Errors> {
-        let room = self.rooms.get_mut(&room_id).ok_or(Errors::RoomNotFound)?;
+        let room = self.rooms.get_mut(room_id).ok_or(Errors::RoomNotFound)?;
 
         if room.members.contains_key(&client_id) {
             return Err(Errors::ClientInRoom);
@@ -134,9 +128,9 @@ impl Server {
     pub fn remove_client_from_room(
         &mut self,
         client_id: ClientId,
-        room_id: RoomId,
+        room_id: &RoomId,
     ) -> Result<(), Errors> {
-        let room = self.rooms.get_mut(&room_id).ok_or(Errors::RoomNotFound)?;
+        let room = self.rooms.get_mut(room_id).ok_or(Errors::RoomNotFound)?;
 
         if room.members.remove(&client_id).is_none() {
             return Err(Errors::ClientNotInRoom);
@@ -146,13 +140,13 @@ impl Server {
     }
 
     // Send the message in the room
-    pub fn send_room_message(
+    pub async fn send_room_message(
         &self,
         from: ClientId,
-        room_id: RoomId,
+        room_id: &RoomId,
         message: String,
     ) -> Result<(), Errors> {
-        let room = self.rooms.get(&room_id).ok_or(Errors::RoomNotFound)?;
+        let room = self.rooms.get(room_id).ok_or(Errors::RoomNotFound)?;
 
         if !room.members.contains_key(&from) {
             return Err(Errors::ClientNotInRoom);
@@ -160,7 +154,7 @@ impl Server {
 
         for clients in room.members.keys() {
             if let Some(client) = self.clients.get(clients) {
-                let _ = client.message.tx.send(format!("[{}] {}", from.0, message));
+                client.message.tx.send(format!("[{}] {}", from.0, message)).await.map_err(|_| Errors::SendFailed)?;
             }
         }
 
@@ -187,33 +181,33 @@ mod tests {
     use super::*;
     use tokio::sync::mpsc;
 
-    fn dummy_sender() -> ChatClient {
-        let (tx, rx) = mpsc::unbounded_channel();
-        ChatClient { tx, rx }
+    fn dummy_sender() -> (ChatClient, mpsc::Receiver<String>) {
+        let (tx, rx) = mpsc::channel(100);
+        (ChatClient { tx }, rx)
     }
 
-    #[test]
-    fn add_client_assigns_unique_ids() {
+    #[tokio::test]
+    async fn add_client_assigns_unique_ids() {
         let mut server = Server::new();
 
-        let sender1 = dummy_sender();
-        let sender2 = dummy_sender();
+        let (sender1, _rx1) = dummy_sender();
+        let (sender2, _rx2) = dummy_sender();
 
-        let c1 = server.add_client(sender1);
-        let c2 = server.add_client(sender2);
+        let c1 = server.add_client(sender1).await.unwrap();
+        let c2 = server.add_client(sender2).await.unwrap();
 
         assert_ne!(c1, c2);
     }
 
-    #[test]
-    fn client_can_join_room() {
+    #[tokio::test]
+    async fn client_can_join_room() {
         let mut server = Server::new();
 
-        let sender = dummy_sender();
+        let (sender, _rx) = dummy_sender();
 
-        let client_id = server.add_client(sender);
+        let client_id = server.add_client(sender).await.unwrap();
         let room_id = RoomId("0".to_string());
 
-        assert!(server.add_client_to_room(client_id, room_id).is_ok());
+        assert!(server.add_client_to_room(client_id, &room_id).is_ok());
     }
 }
