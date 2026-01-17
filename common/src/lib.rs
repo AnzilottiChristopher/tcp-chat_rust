@@ -1,12 +1,13 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, fmt::write};
 use tokio::sync::mpsc;
+use std::fmt;
 
 // Basic Ids
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Copy)]
 pub struct ClientId(pub u64);
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct RoomId(String);
+pub struct RoomId(pub String);
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct RoomMemberID(String);
@@ -179,6 +180,13 @@ pub enum Errors {
     ClientNotInRoom,
     SendFailed,
 }
+
+impl fmt::Display for Errors {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
+impl std::error::Error for Errors {}
 
 #[cfg(test)]
 mod tests {

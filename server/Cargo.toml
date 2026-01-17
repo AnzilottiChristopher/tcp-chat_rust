@@ -5,3 +5,5 @@ edition = "2024"
 
 [dependencies]
 common = { path = "../common" }
+tokio = { version = "1.40", features = ["full"] }
+anyhow = "1.0"
