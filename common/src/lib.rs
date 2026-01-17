@@ -3,7 +3,7 @@ use tokio::sync::mpsc;
 
 // Basic Ids
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Copy)]
-pub struct ClientId(u64);
+pub struct ClientId(pub u64);
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct RoomId(String);
@@ -41,13 +41,12 @@ pub struct Client {
 
 impl Client {
     // Send a message to server
-    pub async fn send(&self, msg: String) {
-        let _ = self
-            .message
+    pub async fn send(&self, msg: String) -> Result<(), Errors> {
+        self.message
             .tx
             .send(msg)
             .await
-            .map_err(|_| Errors::SendFailed);
+            .map_err(|_| Errors::SendFailed)
     }
 }
 
@@ -154,7 +153,12 @@ impl Server {
 
         for clients in room.members.keys() {
             if let Some(client) = self.clients.get(clients) {
-                client.message.tx.send(format!("[{}] {}", from.0, message)).await.map_err(|_| Errors::SendFailed)?;
+                client
+                    .message
+                    .tx
+                    .send(format!("[{}] {}", from.0, message))
+                    .await
+                    .map_err(|_| Errors::SendFailed)?;
             }
         }
 
