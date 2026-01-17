@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 use tokio::sync::mpsc;
+use tokio::net::TcpStream;
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
 // Basic Ids
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Copy)]
@@ -29,16 +31,33 @@ impl ChatRoom {
 }
 
 // TCP Helpers
-pub struct ClientSender {
+pub struct ChatClient {
     pub tx: mpsc::UnboundedSender<String>,
+    pub rx: mpsc::UnboundedReceiver<String>,
 }
 
 // Object of the clients. What they can do as well
 pub struct Client {
-    pub id: ClientId,           // The id for the client
-    pub outbound: ClientSender, // The message Clients send
+    pub id: ClientId, // The id for the client
+    pub server_addr: String,
+    pub message: ChatClient, // The message Clients send
 }
 
+impl Client {
+    pub fn new(client_id: ClientId, address: String) -> Self {
+        let (tx, rx) = mpsc::unbounded_channel();
+        Self {
+            id: client_id,
+            server_addr: address,
+            message: ChatClient { tx, rx },
+        }
+    }
+
+    // Connect to Server 
+    pub fn connect(&self, ) {
+        
+    }
+}
 
 pub struct Server {
     pub rooms: HashMap<RoomId, ChatRoom>,
@@ -60,7 +79,7 @@ impl Server {
 
     // This works on the asssumption the TCP connection is established
     // Furthermore it sends clients their id and adds them to the server's collection
-    pub fn add_client(&mut self, outbound: ClientSender) -> ClientId {
+    pub fn add_client(&mut self, outbound: ChatClient) -> ClientId {
         let client_id = ClientId(self.next_client_id);
         self.next_client_id += 1;
 
@@ -69,7 +88,8 @@ impl Server {
 
         let client = Client {
             id: client_id,
-            outbound,
+            server_addr: "None".to_string(),
+            message: outbound,
         };
 
         self.clients.insert(client_id, client);
@@ -89,12 +109,14 @@ impl Server {
         self.clients.get(&client_id)
     }
 
-    // Adding a client to a room 
-    pub fn add_client_to_room(&mut self, client_id: ClientId, room_id: RoomId) -> Result<(), Errors> {
-        let room = self.rooms
-            .get_mut(&room_id)
-            .ok_or(Errors::RoomNotFound)?;
-        
+    // Adding a client to a room
+    pub fn add_client_to_room(
+        &mut self,
+        client_id: ClientId,
+        room_id: RoomId,
+    ) -> Result<(), Errors> {
+        let room = self.rooms.get_mut(&room_id).ok_or(Errors::RoomNotFound)?;
+
         if room.members.contains_key(&client_id) {
             return Err(Errors::ClientInRoom);
         }
@@ -108,10 +130,12 @@ impl Server {
     }
 
     // Remove a client from room
-    pub fn remove_client_from_room(&mut self, client_id: ClientId, room_id: RoomId) -> Result<(), Errors> {
-        let room = self.rooms
-            .get_mut(&room_id)
-            .ok_or(Errors::RoomNotFound)?;
+    pub fn remove_client_from_room(
+        &mut self,
+        client_id: ClientId,
+        room_id: RoomId,
+    ) -> Result<(), Errors> {
+        let room = self.rooms.get_mut(&room_id).ok_or(Errors::RoomNotFound)?;
 
         if room.members.remove(&client_id).is_none() {
             return Err(Errors::ClientNotInRoom);
@@ -121,7 +145,12 @@ impl Server {
     }
 
     // Send the message in the room
-    pub fn send_room_message(&self, from: ClientId, room_id: RoomId, message: String) -> Result<(), Errors> {
+    pub fn send_room_message(
+        &self,
+        from: ClientId,
+        room_id: RoomId,
+        message: String,
+    ) -> Result<(), Errors> {
         let room = self.rooms.get(&room_id).ok_or(Errors::RoomNotFound)?;
 
         if !room.members.contains_key(&from) {
@@ -130,9 +159,7 @@ impl Server {
 
         for clients in room.members.keys() {
             if let Some(client) = self.clients.get(clients) {
-                let _ = client.outbound.tx.send(
-                    format!("[{}] {}", from.0, message)
-                );
+                let _ = client.message.tx.send(format!("[{}] {}", from.0, message));
             }
         }
 
@@ -153,23 +180,22 @@ pub enum Errors {
     ClientNotInRoom,
 }
 
-
 #[cfg(test)]
-mod tests{
+mod tests {
     use super::*;
     use tokio::sync::mpsc;
 
-    fn dummy_sender() -> (ClientSender, mpsc::UnboundedReceiver<String>) {
+    fn dummy_sender() -> ChatClient {
         let (tx, rx) = mpsc::unbounded_channel();
-        (ClientSender { tx }, rx)
+        ChatClient { tx, rx }
     }
 
     #[test]
     fn add_client_assigns_unique_ids() {
         let mut server = Server::new();
-        
-        let (sender1, _) = dummy_sender();
-        let (sender2, _) = dummy_sender();
+
+        let sender1 = dummy_sender();
+        let sender2 = dummy_sender();
 
         let c1 = server.add_client(sender1);
         let c2 = server.add_client(sender2);
@@ -177,4 +203,15 @@ mod tests{
         assert_ne!(c1, c2);
     }
 
+    #[test]
+    fn client_can_join_room() {
+        let mut server = Server::new();
+
+        let sender = dummy_sender();
+
+        let client_id = server.add_client(sender);
+        let room_id = RoomId("0".to_string());
+
+        assert!(server.add_client_to_room(client_id, room_id).is_ok());
+    }
 }
