@@ -21,11 +21,23 @@ pub async fn handle_client(stream: TcpStream, server: Arc<Mutex<Server>>,) -> an
         let mut server_lock = server.lock().await;
         server_lock.add_client(chat_client).await?
     };
+    let id_msg = format!("CLIENT_ID:{}\n", client_id.0);
+    writer.write_all(id_msg.as_bytes()).await?;
+    writer.flush().await?;
 
     // Writer Task: server -> client 
     tokio::spawn(async move {
         while let Some(msg) = rx.recv().await {
             if writer.write_all(msg.as_bytes()).await.is_err() {
+                println!("Failed to write to client");
+                break;
+            }
+            if writer.write_all(b"\n").await.is_err() {
+                println!("Failed to write to client");
+                break;
+            }
+            if writer.flush().await.is_err() {
+                println!("Failed to write to client");
                 break;
             }
         }
@@ -43,14 +55,17 @@ pub async fn handle_client(stream: TcpStream, server: Arc<Mutex<Server>>,) -> an
         let msg = line.trim().to_string();
 
         // Lock server to handle message 
-        println!("Received raw message from {}: {:?}", client_id.0, msg);
         let mut server_lock = server.lock().await;
-        handle_client_message(&mut server_lock, client_id, msg).await?;
+        let should_continue = handle_client_message(&mut server_lock, client_id, msg).await?;
+        drop(server_lock);
 
+        if !should_continue {
+            break;
+        }
     }
         // Cleanup on disconnect 
         let mut server_lock = server.lock().await;
         server_lock.remove_client(client_id);
-
+        println!("Client {} disconnected", client_id.0);
         Ok(())
 }

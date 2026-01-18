@@ -1,6 +1,6 @@
+use std::fmt;
 use std::{collections::HashMap, fmt::write};
 use tokio::sync::mpsc;
-use std::fmt;
 
 // Basic Ids
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Copy)]
@@ -38,6 +38,7 @@ pub struct ChatClient {
 pub struct Client {
     pub id: ClientId,        // The id for the client
     pub message: ChatClient, // The message Clients send
+    pub current_room: Option<RoomId>,
 }
 
 impl Client {
@@ -68,6 +69,9 @@ impl Server {
             next_client_id: 0,
         }
     }
+    pub fn get_client(&self, client_id: &ClientId) -> Option<&Client> {
+        self.clients.get(client_id)
+    }
 
     // This works on the asssumption the TCP connection is established
     // Furthermore it sends clients their id and adds them to the server's collection
@@ -75,16 +79,10 @@ impl Server {
         let client_id = ClientId(self.next_client_id);
         self.next_client_id += 1;
 
-        let welcome_msg = format!("Your client ID is {}", client_id.0);
-        outbound
-            .tx
-            .send(welcome_msg)
-            .await
-            .map_err(|_| Errors::SendFailed)?;
-
         let client = Client {
             id: client_id,
             message: outbound,
+            current_room: None,
         };
 
         self.clients.insert(client_id, client);
@@ -98,10 +96,6 @@ impl Server {
         for room in self.rooms.values_mut() {
             room.members.remove(&client_id);
         }
-    }
-    // Retrieve Client Info
-    pub fn get_client(&self, client_id: &ClientId) -> Option<&Client> {
-        self.clients.get(&client_id)
     }
 
     // Adding a client to a room
@@ -120,6 +114,11 @@ impl Server {
 
         room.members.insert(client_id, member_id);
         room.next_member_id += 1;
+
+        // Adding RoomID to client
+        if let Some(client) = self.clients.get_mut(&client_id) {
+            client.current_room = Some(room_id.clone());
+        }
 
         Ok(())
     }
@@ -153,6 +152,9 @@ impl Server {
         }
 
         for clients in room.members.keys() {
+            if *clients == from {
+                continue;
+            }
             if let Some(client) = self.clients.get(clients) {
                 client
                     .message
