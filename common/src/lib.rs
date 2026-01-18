@@ -37,6 +37,7 @@ pub struct ChatClient {
 // Object of the clients. What they can do as well
 pub struct Client {
     pub id: ClientId,        // The id for the client
+    pub name: Option<String>,
     pub message: ChatClient, // The message Clients send
     pub current_room: Option<RoomId>,
 }
@@ -81,6 +82,7 @@ impl Server {
 
         let client = Client {
             id: client_id,
+            name: None,
             message: outbound,
             current_room: None,
         };

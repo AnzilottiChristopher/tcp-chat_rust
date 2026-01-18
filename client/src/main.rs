@@ -12,7 +12,6 @@ use common::{ChatClient, Client, ClientId, RoomId};
 
 pub struct RuntimeClient {
     pub client: Client,
-    pub name: String,
     pub rx: mpsc::Receiver<String>,
     pub server_addr: String,
 }
@@ -22,13 +21,13 @@ impl RuntimeClient {
         let chat_client = ChatClient { tx };
         let client = Client {
             id,
+            name: Some(name),
             message: chat_client,
             current_room: Some(RoomId("0".to_string())),
         };
 
         Self {
             client,
-            name,
             rx,
             server_addr,
         }
@@ -52,6 +51,8 @@ impl RuntimeClient {
             self.client.id = ClientId(id); // This updates to correct client id 
             println!("Assigned Client ID: {}", id);
         }
+
+        // TODO Need to send server the username so server can list it
 
         // Writer Tasks, takes inputs from terminal to be sent to server
         let mut rx = self.rx;
