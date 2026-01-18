@@ -1,8 +1,7 @@
 // Tokio async runtime
 use std::io;
-use tokio::io::{AsyncBufReadExt, AsyncReadExt, AsyncWriteExt, BufReader};
+use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
 use tokio::net::TcpStream;
-use tokio::select;
 use tokio::sync::mpsc;
 
 // Standard library
@@ -24,7 +23,7 @@ impl RuntimeClient {
         let client = Client {
             id,
             message: chat_client,
-            current_room: None,
+            current_room: Some(RoomId("0".to_string())),
         };
 
         Self {

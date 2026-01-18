@@ -1,5 +1,5 @@
 use std::fmt;
-use std::{collections::HashMap, fmt::write};
+use std::{collections::HashMap};
 use tokio::sync::mpsc;
 
 // Basic Ids
@@ -60,7 +60,7 @@ pub struct Server {
 
 impl Server {
     pub fn new() -> Self {
-        let rooms = (0..10)
+        let rooms = (0..11)
             .map(|i| (RoomId(i.to_string()), ChatRoom::new(i.to_string())))
             .collect();
         Self {

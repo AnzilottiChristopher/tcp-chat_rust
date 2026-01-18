@@ -1,18 +1,18 @@
+use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
 use tokio::net::TcpStream;
-use tokio::io::{BufReader, AsyncBufReadExt, AsyncWriteExt};
 use tokio::sync::mpsc;
 
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
-use common::{Server, ChatClient};
 use crate::protocol::handle_client_message;
+use common::{ChatClient, Server, RoomId};
 
-pub async fn handle_client(stream: TcpStream, server: Arc<Mutex<Server>>,) -> anyhow::Result<()> {
+pub async fn handle_client(stream: TcpStream, server: Arc<Mutex<Server>>) -> anyhow::Result<()> {
     let (reader, mut writer) = stream.into_split();
     let mut reader = BufReader::new(reader);
 
-    // Creating channel for sending messages to this client 
+    // Creating channel for sending messages to this client
     let (tx, mut rx) = mpsc::channel::<String>(100);
     let chat_client = ChatClient { tx };
 
@@ -25,7 +25,21 @@ pub async fn handle_client(stream: TcpStream, server: Arc<Mutex<Server>>,) -> an
     writer.write_all(id_msg.as_bytes()).await?;
     writer.flush().await?;
 
-    // Writer Task: server -> client 
+    {
+        let mut server_lock = server.lock().await;
+        let lobby = RoomId("0".to_string());
+        if let Ok(()) = server_lock.add_client_to_room(client_id, &lobby) {
+            if let Some(client) = server_lock.get_client(&client_id) {
+                let _ = client
+                    .message
+                    .tx
+                    .send("Welcome to the lobby! Use '/help' for commands".to_string())
+                    .await;
+            }
+        }
+    }
+
+    // Writer Task: server -> client
     tokio::spawn(async move {
         while let Some(msg) = rx.recv().await {
             if writer.write_all(msg.as_bytes()).await.is_err() {
@@ -43,7 +57,7 @@ pub async fn handle_client(stream: TcpStream, server: Arc<Mutex<Server>>,) -> an
         }
     });
 
-    // Reader loop: client -> server 
+    // Reader loop: client -> server
     let mut line = String::new();
     loop {
         line.clear();
@@ -54,7 +68,7 @@ pub async fn handle_client(stream: TcpStream, server: Arc<Mutex<Server>>,) -> an
 
         let msg = line.trim().to_string();
 
-        // Lock server to handle message 
+        // Lock server to handle message
         let mut server_lock = server.lock().await;
         let should_continue = handle_client_message(&mut server_lock, client_id, msg).await?;
         drop(server_lock);
@@ -63,9 +77,9 @@ pub async fn handle_client(stream: TcpStream, server: Arc<Mutex<Server>>,) -> an
             break;
         }
     }
-        // Cleanup on disconnect 
-        let mut server_lock = server.lock().await;
-        server_lock.remove_client(client_id);
-        println!("Client {} disconnected", client_id.0);
-        Ok(())
+    // Cleanup on disconnect
+    let mut server_lock = server.lock().await;
+    server_lock.remove_client(client_id);
+    println!("Client {} disconnected", client_id.0);
+    Ok(())
 }
