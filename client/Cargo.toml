@@ -6,3 +6,5 @@ edition = "2024"
 [dependencies]
 common = { path = "../common" }
 tokio = { version = "1.40", features = ["full"] }
+ratatui = "0.26"
+crossterm = "0.27"
