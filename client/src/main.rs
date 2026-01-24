@@ -259,7 +259,7 @@ fn ui(f: &mut Frame, app: &App) {
             Constraint::Length(3),
             Constraint::Length(1),
         ])
-        .split(f.area());
+        .split(f.size());
 
     // Message Area
     let messages: Vec<ListItem> = app
@@ -312,7 +312,6 @@ fn ui(f: &mut Frame, app: &App) {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-<<<<<<< HEAD
     let mut name = String::new();
     println!("Please Enter A Username: ");
     io::stdin().read_line(&mut name)?;
@@ -322,11 +321,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
         println!("Username cannot be empty");
         return Ok(());
     }
-=======
-    println!("Please Enter A Username: ");
-    let mut name = String::new();
-    io::stdin().read_line(&mut name).expect("Failed to read line");
->>>>>>> 6de1642916cd85a6af7755fdc86bce2e2425d5a9
     let client = RuntimeClient::new(ClientId(0), "127.0.0.1:8080".to_string(), name);
 
     client.run().await
