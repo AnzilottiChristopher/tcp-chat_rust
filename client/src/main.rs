@@ -115,6 +115,7 @@ impl RuntimeClient {
         // Write back to Server the client's username
         if let Some(name) = &self.client.name {
             let _ = writer.write_all(name.as_bytes()).await;
+            let _ = writer.write_all(b"\n").await;
         }
 
         // Reading initial clientID from server
