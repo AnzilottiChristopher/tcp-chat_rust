@@ -112,6 +112,11 @@ impl RuntimeClient {
 
         let mut reader = BufReader::new(reader);
 
+        // Write back to Server the client's username
+        if let Some(name) = &self.client.name {
+            let _ = writer.write_all(name.as_bytes()).await;
+        }
+
         // Reading initial clientID from server
         let mut line = String::new();
         reader.read_line(&mut line).await?;
@@ -140,7 +145,6 @@ impl RuntimeClient {
         // Reader task, reading from TCPSTREAM
         //let tx = self.client.message.tx.clone();
         let reader_handle = tokio::spawn(async move {
-            let mut reader = BufReader::new(reader);
             let mut line = String::new();
             while reader.read_line(&mut line).await.unwrap_or(0) > 0 {
                 let _ = ui_tx.send(line.trim().to_string()).await;
@@ -308,6 +312,7 @@ fn ui(f: &mut Frame, app: &App) {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
+<<<<<<< HEAD
     let mut name = String::new();
     println!("Please Enter A Username: ");
     io::stdin().read_line(&mut name)?;
@@ -317,11 +322,16 @@ async fn main() -> Result<(), Box<dyn Error>> {
         println!("Username cannot be empty");
         return Ok(());
     }
+=======
+    println!("Please Enter A Username: ");
+    let mut name = String::new();
+    io::stdin().read_line(&mut name).expect("Failed to read line");
+>>>>>>> 6de1642916cd85a6af7755fdc86bce2e2425d5a9
     let client = RuntimeClient::new(ClientId(0), "127.0.0.1:8080".to_string(), name);
 
     client.run().await
 }
 
-fn display_to_terminal(line: String) {
+/*fn display_to_terminal(line: String) {
     println!("{}", line);
-}
+}*/
